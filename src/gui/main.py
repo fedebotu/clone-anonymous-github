@@ -3,7 +3,6 @@ import webbrowser
 import darkdetect
 
 from src.gui.images import LOGO_B64
-# from src.gui.button import RoundedButton # problematic, seems to need heavy imports
 from src.download import download_repo
 from src.config import load_config, get_config_from_values
 from src.utils import ThreadWithException
