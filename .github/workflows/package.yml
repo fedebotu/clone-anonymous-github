@@ -1,0 +1,130 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on: [push, pull_request]
+
+jobs:
+#   lint:
+#     name: Lint python
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#     - uses: actions/setup-python@v2
+#     - uses: actions/cache@v2
+#       with:
+#         path: ~/.cache/pip
+#         key: ${{ runner.os }}-lint-cache-${{ hashFiles('requirements.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-lint-cache-
+#     - name: Install dependencies
+#       run: |
+#         python -m pip install --upgrade pip wheel
+#         python -m pip install prospector pytest -r requirements.txt
+#     - name: Lint via prospector
+#       run: python -m prospector
+
+  Windows-Build:
+    runs-on: windows-latest
+#     needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9.12]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        # A list of files, directories, and wildcard patterns to cache and restore
+        path: |
+          ~\AppData\Local\pip\Cache
+          ~\AppData\Local\Nuitka\Nuitka
+          Clone-Anonymous-Github.build
+          Clone-Anonymous-Github.dist
+          Clone-Anonymous-Github-build
+        # An explicit key for restoring and saving the cache
+        key: ${{ runner.os }}-cache-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cache-
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip wheel
+        python -m pip install nuitka pytest zstandard -r requirements.txt
+    - name: Make OneFile
+      run: |
+        nuitka --assume-yes-for-downloads --show-scons --no-progress --plugin-enable=tk-inter --disable-console --include-package-data=selenium --windows-icon-from-ico=assets/icon.ico --onefile -o Clone-Anonymous-Github.exe run.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+          name: Windows-Binary
+          path: Clone-Anonymous-Github.exe
+
+
+  MacOS-Build:
+    runs-on: macos-latest
+#     needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9.12]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt', 'requirements-mac.txt', 'requirements-dev.txt') }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip wheel
+        python -m pip install pytest -r requirements.txt -r requirements-mac.txt -r requirements-dev.txt
+    - name: Make OneFile
+      run: |
+        pyinstaller --onefile run.py
+        chmod +x dist/Clone-Anonymous-Github
+    - name: Tar file
+      run: tar -cvf dist/Clone-Anonymous-Github.tar dist/Clone-Anonymous-Github
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+          name: Mac-Binary
+          path: dist/Clone-Anonymous-Github.tar
+
+  publish:
+    name: Release
+    permissions:
+      contents: write
+    needs: [Windows-Build, MacOS-Build]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+    - name: Download archived package
+      uses: actions/download-artifact@v2
+      with:
+        path: artifacts
+
+    - name: Rename file name for release
+      run: |
+        mv artifacts/Windows-Binary/Clone-Anonymous-Github.exe artifacts/Clone-Anonymous-Github.exe
+        mv artifacts/Mac-Binary/Clone-Anonymous-Github.tar artifacts/Clone-Anonymous-Github.tar
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        body: "Released via Github Actions"
+        files: |
+          artifacts/Clone-Anonymous-Github.exe
+          artifacts/Clone-Anonymous-Github.tar
