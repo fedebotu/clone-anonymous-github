@@ -5,6 +5,7 @@ import darkdetect
 from src.gui.images import LOGO_B64
 from src.download import download_repo
 from src.config import load_config, get_config_from_values
+from src.gui.button import RoundedButton
 from src.utils import ThreadWithException
 
 DEFAULT_THEME = 'Reddit'
@@ -66,7 +67,7 @@ def main_page():
         [gui.Text(HELP_TEXT_VIRUS, size=(MAX_WIDTH, 4), enable_events=True)],
         [gui.Text('Other Bugs',font='Calibri 16')],
         [gui.Text(HELP_TEXT_OTHER, size=(MAX_WIDTH, 4), enable_events=True)],
-        [gui.Button("Github Issues")],
+        [RoundedButton("Github Issues")],
         ]
 
     layout_tab4 = [
@@ -74,7 +75,7 @@ def main_page():
         [gui.Column([[gui.Image(data=LOGO_B64, size=(150,150), subsample=(2))]], justification='center')],
         [gui.Text(ABOUT_TEXT, size=(MAX_WIDTH, 6))],
         [gui.Text(f"Application version: {APP_VERSION}",font=DEFAULT_FONT)],
-        [gui.Button("Github Repository"),gui.Button("Official Anonymous Github Page")],
+        [RoundedButton("Github Repository"),RoundedButton("Official Anonymous Github Page")],
     ]
 
     layout = [[gui.TabGroup([[gui.Tab('Main', layout_tab1, title_color='Blue',
@@ -89,7 +90,7 @@ def main_page():
     
             [[gui.Text('Debug window', font=("Calibri", 18))],
             [gui.Multiline("", size=(MAX_WIDTH, 20), autoscroll=True, reroute_stdout=True, reroute_stderr=True, key='STDOUT', disabled=True)],
-            [gui.Button('Clone', tooltip='Run program with current configuration'), gui.Button('Stop', tooltip='Stop current run'), gui.Button('Exit')],]]
+            [RoundedButton('Clone', tooltip='Run program with current configuration'), RoundedButton('Stop', tooltip='Stop current run'), RoundedButton('Exit')],]]
             
 
     window = gui.Window(APP_NAME, layout, icon=LOGO_B64)
