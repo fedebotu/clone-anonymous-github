@@ -93,9 +93,9 @@ jobs:
     - name: Make OneFile
       run: |
         pyinstaller --onefile run.py
-        chmod +x dist/Clone-Anonymous-Github
+        chmod +x dist/run
     - name: Tar file
-      run: tar -cvf dist/Clone-Anonymous-Github.tar dist/Clone-Anonymous-Github
+      run: tar -cvf dist/Clone-Anonymous-Github.tar dist/run
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
