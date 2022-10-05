@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9.12]
+        python-version: [3.10.2]
 
     steps:
     - uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
         python -m pip install nuitka pytest zstandard -r requirements.txt
     - name: Make OneFile
       run: |
-        nuitka --assume-yes-for-downloads --show-scons --no-progress --plugin-enable=tk-inter --disable-console --include-package-data=selenium --windows-icon-from-ico=assets/icon.ico --onefile -o Clone-Anonymous-Github.exe run.py
+        nuitka --assume-yes-for-downloads --show-scons --no-progress --plugin-enable=tk-inter --disable-console --windows-icon-from-ico=assets/icon.ico --onefile -o Clone-Anonymous-Github.exe run.py
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
@@ -74,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9.12]
+        python-version: [3.10.2]
 
     steps:
     - uses: actions/checkout@v2
