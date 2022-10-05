@@ -1,3 +1,4 @@
-pysimplegui
-tk
-darkdetect
+PySimpleGUI==4.60.3
+Pillow==9.2.0
+darkdetect==0.7.1
+requests==2.28.1
