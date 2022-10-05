@@ -1,7 +1,6 @@
 from PIL import Image, ImageDraw
 from PySimpleGUI import Button, BUTTON_TYPE_READ_FORM, FILE_TYPES_ALL_FILES, theme_background_color, theme_button_color
 import io
-#import ctypes
 from base64 import b64encode
 
 def RoundedButton(button_text=' ', corner_radius=0.5, button_type=BUTTON_TYPE_READ_FORM, target=(None, None),

@@ -2,19 +2,24 @@ import requests
 import os
 from time import sleep
 import concurrent.futures
-import math
 
 from src.utils import get_dict_vals, dict_parse
 
-def convert_size(size_bytes):
-    """Convert bytes to human readable format"""
-    if size_bytes == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
-    p = math.pow(1024, i)
-    s = round(size_bytes / p, 2)
-    return "%s %s" % (s, size_name[i])
+
+def format_file_size(size, decimals=2, binary_system=False):
+    if binary_system:
+        units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB']
+        largest_unit = 'YiB'
+        step = 1024
+    else:
+        units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB']
+        largest_unit = 'YB'
+        step = 1000
+    for unit in units:
+        if size < step:
+            return ('%.' + str(decimals) + 'f %s') % (size, unit)
+        size /= step
+    return ('%.' + str(decimals) + 'f %s') % (size, largest_unit)
 
 
 def req_url(dl_file, max_retry=5):
@@ -65,7 +70,7 @@ def download_repo(config):
     file_list = resp.json()
 
     sizes = [s[1] for s in get_dict_vals(file_list, ['size'])]
-    print("Downloading {} files, tot: {}:".format(len(sizes), convert_size(sum((sizes)))))
+    print("Downloading {} files, tot: {}:".format(len(sizes), format_file_size(sum((sizes)))))
     print("=====================================")
 
     dl_url = "https://anonymous.4open.science/api/repo/"+ name +"/file/"
