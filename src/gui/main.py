@@ -14,7 +14,7 @@ DEFAULT_THEME = 'Reddit'
 DEFAULT_FONT = 'Calibri 12'
 MAX_WIDTH = 60
 APP_NAME = "Clone Anonymous Github"
-APP_VERSION = "1.0.0"
+APP_VERSION = "0.1.0"
 GITHUB_PAGE = "https://github.com/fedebotu/clone-anonymous-github"
 MAIN_TEXT = "Easily clone/download Anonymous Github repositories from anonymous.4open.science with a GUI interface"
 MAIN_HELP_TEXT = "Copy and paste the URL of a target repository (should work also from a file, its parent repo will be targeted), select your download folder and press the clone button. You may stop the download thread at any time by pressing the stop button. "
@@ -51,8 +51,8 @@ def main_page():
         [gui.Text(MAIN_TEXT, size=(MAX_WIDTH, 2))],
         [gui.Text('Get started', font='Calibri 12')],
         [gui.Text(MAIN_HELP_TEXT, size=(MAX_WIDTH, 5))],
-        [gui.Text('Target URL')],
-        [gui.InputText(config['url'], key='url', tooltip='Your Anonymous Github URL you want to clone')],
+        [gui.Text(f'Target URL')],
+        [gui.InputText('', key='url', tooltip='Your Anonymous Github URL you want to clone')],
         [gui.Text('Choose download folder', justification='right')],
         [gui.InputText(config['save_dir'], key='save_dir'), gui.FolderBrowse(tooltip='Choose target download folder')]
         ]
