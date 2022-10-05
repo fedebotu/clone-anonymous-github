@@ -5,6 +5,7 @@ Easily clone/download Anonymous Github repositories from [anonymous.4open.scienc
 ## Usage
 ###  Windows and Mac
 For Windows and Mac users: from the [Release Page](https://github.com/fedebotu/clone-anonymous-github/releases/), download and run files that fit your operating system.
+**Notice about antivirus**: the executables may be detected as fake positives, so you need to temporarily disable your anti virus program 
 
 ### Linux
 First clone the repository and install the requirements (optionally, create a virtual environment)
@@ -18,7 +19,7 @@ python run.py
 ```
 
 ## Contribute
-Feel free to raise issues and submit pull requests! :D 
+Feel free to raise issues and submit pull requests! :D
 
 ## Acknowledgements
 Thanks to the original [tdurieux's Anonymous Github project](https://github.com/tdurieux/anonymous_github), [ShoufaChen's Clone Anonymous Github](https://github.com/ShoufaChen/clone-anonymous4open) and [kynehc's Clone Anonymous Github](https://github.com/kynehc/clone_anonymous_github)
