@@ -43,9 +43,10 @@ def req_url(dl_file, max_retry=5):
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
         except Exception as e:
+            exception = e
             # print('file request exception (retry {}): {} - {}'.format(i, e, save_path))
             sleep(0.4)
-    return 'File request exception (retry {}): {} - {}'.format(i, e, save_path)
+    return 'File request exception (retry {}): {} - {}'.format(i, exception, save_path)
 
 
 def download_repo(config):
