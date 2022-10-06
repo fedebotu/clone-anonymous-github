@@ -26,7 +26,13 @@ def req_url(dl_file, max_retry=5):
     """Download file"""
     url = dl_file[0]
     save_path = dl_file[1]
-    save_dir = '/'.join(save_path.split('/')[:-1])
+
+    # Check Windows or Unix (Mac+Linux); nt is Windows
+    if os.name == 'nt': 
+        divider = '\\'
+    else:
+        divider = '/'
+    save_dir = divider.join(save_path.split(divider)[:-1])
     if not os.path.exists(save_dir) and save_dir:
         try:
             os.makedirs(save_dir)
@@ -82,7 +88,7 @@ def download_repo(config):
         save_path = os.path.join(save_dir, file_path)
         file_url = dl_url + file_path
         files.append((file_url, save_path))
-    
+        
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_conns) as executor:
         future_to_url = (executor.submit(req_url, dl_file) for dl_file in files)
         for future in concurrent.futures.as_completed(future_to_url):
