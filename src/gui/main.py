@@ -5,14 +5,13 @@ import darkdetect
 from src.gui.images import LOGO_B64
 from src.download import download_repo
 from src.config import load_config, get_config_from_values
-from src.gui.button import RoundedButton
 from src.utils import ThreadWithException
 
 DEFAULT_THEME = 'Reddit'
 DEFAULT_FONT = 'Calibri 12'
 MAX_WIDTH = 60
 APP_NAME = "Clone Anonymous Github"
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.2.0"
 GITHUB_PAGE = "https://github.com/fedebotu/clone-anonymous-github"
 MAIN_TEXT = "Easily clone/download Anonymous Github repositories from anonymous.4open.science with a GUI interface"
 MAIN_HELP_TEXT = "Copy and paste the URL of a target repository (should work also from a file, its parent repo will be targeted), select your download folder and press the clone button. You may stop the download thread at any time by pressing the stop button. "
@@ -67,7 +66,7 @@ def main_page():
         [gui.Text(HELP_TEXT_VIRUS, size=(MAX_WIDTH, 4), enable_events=True)],
         [gui.Text('Other Bugs',font='Calibri 16')],
         [gui.Text(HELP_TEXT_OTHER, size=(MAX_WIDTH, 4), enable_events=True)],
-        [RoundedButton("Github Issues")],
+        [gui.Button("Github Issues")],
         ]
 
     layout_tab4 = [
@@ -75,7 +74,7 @@ def main_page():
         [gui.Column([[gui.Image(data=LOGO_B64, size=(150,150), subsample=(2))]], justification='center')],
         [gui.Text(ABOUT_TEXT, size=(MAX_WIDTH, 6))],
         [gui.Text(f"Application version: {APP_VERSION}",font=DEFAULT_FONT)],
-        [RoundedButton("Github Repository"),RoundedButton("Official Anonymous Github Page")],
+        [gui.Button("Github Repository"),gui.Button("Official Anonymous Github Page")],
     ]
 
     layout = [[gui.TabGroup([[gui.Tab('Main', layout_tab1, title_color='Blue',
@@ -90,7 +89,7 @@ def main_page():
     
             [[gui.Text('Debug window', font=("Calibri", 18))],
             [gui.Multiline("", size=(MAX_WIDTH, 20), autoscroll=True, reroute_stdout=True, reroute_stderr=True, key='STDOUT', disabled=True)],
-            [RoundedButton('Clone', tooltip='Run program with current configuration'), RoundedButton('Stop', tooltip='Stop current run'), RoundedButton('Exit')],]]
+            [gui.Button('Clone', tooltip='Run program with current configuration'), gui.Button('Stop', tooltip='Stop current run'), gui.Button('Exit')],]]
             
 
     window = gui.Window(APP_NAME, layout, icon=LOGO_B64)
