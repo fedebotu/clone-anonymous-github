@@ -2,6 +2,9 @@
 
 Easily clone/download Anonymous Github repositories from [anonymous.4open.science](anonymous.4open.science) with a GUI interface!
 
+## Download
+[![Latest release](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-WINDOWS.exe) [![Latest release](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-MAC.tar)
+
 ## Usage
 ###  Windows and Mac
 For Windows and Mac users: from the [Release Page](https://github.com/fedebotu/clone-anonymous-github/releases/), download and run files that fit your operating system.
