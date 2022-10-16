@@ -42,6 +42,7 @@ def req_url(dl_file, max_retry=5):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
     }
+
     for i in range(max_retry):
         try:
             r = requests.get(url, headers=headers)
@@ -86,7 +87,7 @@ def download_repo(config):
     for file in dict_parse(file_list):
         file_path = os.path.join(*file[-len(file):-2]) # * operator to unpack the arguments out of a list
         save_path = os.path.join(save_dir, file_path)
-        file_url = dl_url + file_path
+        file_url = os.path.join(dl_url, file_path).replace("\\","/") # replace \ with / for Windows compatibility
         files.append((file_url, save_path))
         
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_conns) as executor:
