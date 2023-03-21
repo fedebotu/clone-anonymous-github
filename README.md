@@ -1,6 +1,7 @@
 # Clone Anonymous Github
 
-Easily clone/download Anonymous Github repositories from [anonymous.4open.science](anonymous.4open.science) with a GUI interface!
+Easily clone/download Anonymous Github repositories from [anonymous.4open.science](anonymous.4open.science) with a GUI interface.
+
 _No need for GUI interface? We support command line as well!_
 
 ## Download
