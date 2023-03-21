@@ -1,11 +1,12 @@
 # Clone Anonymous Github
 
 Easily clone/download Anonymous Github repositories from [anonymous.4open.science](anonymous.4open.science) with a GUI interface!
+_No need for GUI interface? We support command line as well!_
 
 ## Download
 [![Latest release](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-WINDOWS.exe) [![Latest release](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-MAC.tar)
 
-## Usage
+## Usage (GUI)
 ###  Windows and Mac
 For Windows and Mac users: from the [Release Page](https://github.com/fedebotu/clone-anonymous-github/releases/), download and run files that fit your operating system.
 **Notice about antivirus**: the executables may be detected as fake positives, so you need to temporarily disable your anti virus program 
@@ -19,6 +20,12 @@ then, run
 
 ```shell
 python run.py
+```
+
+## Usage (command line)
+```shell
+git clone https://github.com/fedebotu/clone-anonymous-github.git && cd clone-anonymous-github
+python3 src/download.py --url [YOUR_ANONYMOUS_GITHUB_URL]
 ```
 
 ## Contribute
