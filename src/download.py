@@ -3,7 +3,25 @@ import os
 from time import sleep
 import concurrent.futures
 
-from src.utils import get_dict_vals, dict_parse
+
+def dict_parse(dic, pre=None):
+    pre = pre[:] if pre else []
+    if isinstance(dic, dict):
+        for key, value in dic.items():
+            if isinstance(value, dict):
+                for d in dict_parse(value, pre + [key]):
+                    yield d
+            else:
+                yield pre + [key, value]
+    else:
+        yield pre + [dic]
+
+
+def get_dict_vals(test_dict, key_list):
+   for i, j in test_dict.items():
+     if i in key_list:
+        yield (i, j)
+     yield from [] if not isinstance(j, dict) else get_dict_vals(j, key_list)
 
 
 def format_file_size(size, decimals=2, binary_system=False):
@@ -104,3 +122,14 @@ def download_repo(config):
     print("=====================================")
     print("Files saved to: " + save_dir)
     print("=====================================")
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Download Anonymous Github repo')
+    parser.add_argument('--url', type=str, help='Anonymous Github repo url')
+    parser.add_argument('--save_dir', type=str, default='.', help='Save directory')
+    parser.add_argument('--max_conns', type=int, default=10, help='Max connections')
+    parser.add_argument('--max_retry', type=int, default=5, help='Max retries')
+    args = parser.parse_args()
+    download_repo(args.__dict__)

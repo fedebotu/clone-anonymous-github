@@ -1,27 +1,6 @@
 import threading
 import ctypes
 
-
-def dict_parse(dic, pre=None):
-    pre = pre[:] if pre else []
-    if isinstance(dic, dict):
-        for key, value in dic.items():
-            if isinstance(value, dict):
-                for d in dict_parse(value, pre + [key]):
-                    yield d
-            else:
-                yield pre + [key, value]
-    else:
-        yield pre + [dic]
-
-
-def get_dict_vals(test_dict, key_list):
-   for i, j in test_dict.items():
-     if i in key_list:
-        yield (i, j)
-     yield from [] if not isinstance(j, dict) else get_dict_vals(j, key_list)
-
-
 class ThreadWithException(threading.Thread):
     """Thread class throwing an exception when stopped"""
     def __init__(self, target, args):
