@@ -2,6 +2,7 @@ import requests
 import os
 from time import sleep
 import concurrent.futures
+from functools import partial
 
 
 def dict_parse(dic, pre=None):
@@ -40,10 +41,33 @@ def format_file_size(size, decimals=2, binary_system=False):
     return ('%.' + str(decimals) + 'f %s') % (size, largest_unit)
 
 
-def req_url(dl_file, max_retry=5):
+def check_file_authentic(save_path):
+    """Check text file existed and authentic"""
+    if not os.path.exists(save_path):
+        return False
+
+    # Jump up for these file types because we cannot determine these file types are downloaded correctly or not
+    jump_list = ['.png', '.jpg', '.gif', '.mp4']
+    if True in [save_path.endswith(x) for x in jump_list]:
+        return True
+
+    # Test file is downloaded okay
+    try:
+        with open(save_path, "rt") as f:
+            if f.readline() != "You can only make 350 requests every 15min. Please try again later.":
+                return True
+            return False
+    except Exception:
+        return False
+
+
+def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     """Download file"""
     url = dl_file[0]
     save_path = dl_file[1]
+
+    if check_file_authentic(save_path):
+        return f"File {save_path} existed & authentic"
 
     # Check Windows or Unix (Mac+Linux); nt is Windows
     if os.name == 'nt': 
@@ -57,13 +81,14 @@ def req_url(dl_file, max_retry=5):
         except OSError:
             pass
     
-    headers = {
+    headers = headers if headers else {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
     }
+    proxies = proxies if proxies else { "http": "", "https":"", }
 
     for i in range(max_retry):
         try:
-            r = requests.get(url, headers=headers)
+            r = requests.get(url, headers=headers, proxies=proxies)
             with open(save_path, "wb") as f:
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
@@ -81,6 +106,8 @@ def download_repo(config):
     save_dir = config['save_dir']
     max_conns = config['max_conns']
     max_retry = config['max_retry']
+    proxies = {"http": config['proxies'], "https": config['proxies']}
+    verbose = config['verbose']
 
     name = url.split('/')[4]
     save_dir = os.path.join(save_dir, name)
@@ -92,7 +119,7 @@ def download_repo(config):
     headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
     }
-    resp = requests.get(url=list_url, headers=headers)
+    resp = requests.get(url=list_url, headers=headers, proxies=proxies)
     file_list = resp.json()
 
     sizes = [s[1] for s in get_dict_vals(file_list, ['size'])]
@@ -107,9 +134,10 @@ def download_repo(config):
         save_path = os.path.join(save_dir, file_path)
         file_url = os.path.join(dl_url, file_path).replace("\\","/") # replace \ with / for Windows compatibility
         files.append((file_url, save_path))
-        
+
+    partial_req = partial(req_url, max_retry=max_retry, headers=headers, proxies=proxies)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_conns) as executor:
-        future_to_url = (executor.submit(req_url, dl_file) for dl_file in files)
+        future_to_url = (executor.submit(partial_req, dl_file) for dl_file in files)
         for future in concurrent.futures.as_completed(future_to_url):
             try:
                 data = future.result()
@@ -117,8 +145,8 @@ def download_repo(config):
                 data = str(type(exc))
             finally:
                 out.append(data)
-                print(data)
-                # print(str(len(out)),end="\r")
+                if verbose or "existed & authentic" not in data:
+                    print(data)
     print("=====================================")
     print("Files saved to: " + save_dir)
     print("=====================================")
@@ -131,5 +159,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_dir', type=str, default='.', help='Save directory')
     parser.add_argument('--max_conns', type=int, default=10, help='Max connections')
     parser.add_argument('--max_retry', type=int, default=5, help='Max retries')
+    parser.add_argument('--proxies', type=str, default='', help='Proxies used for connection')
+    parser.add_argument('--verbose', type=bool, default=False, help='Display skipped files or not')
     args = parser.parse_args()
     download_repo(args.__dict__)
