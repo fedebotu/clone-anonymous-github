@@ -140,18 +140,6 @@ def download_repo(config):
     files = []
     out = []
     for file in dict_parse(file_list):
-        # import pdb; pdb.set_trace()
-        if 'arch2vec' in file:
-            pass 
-        if 'CATE' in file:
-            pass 
-        if 'correlation_results' in file:
-            pass 
-        if any('.slurm' in str(x) for x in file):
-            pass
-        if any('.csv' in str(x) for x in file):
-            pass 
-        print(file)
         file_path = os.path.join(*file[-len(file):-2]) # * operator to unpack the arguments out of a list
         save_path = os.path.join(save_dir, file_path)
         file_url = os.path.join(dl_url, file_path).replace("\\","/") # replace \ with / for Windows compatibility
