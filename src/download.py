@@ -60,9 +60,12 @@ def check_file_authentic(save_path):
     except Exception:
         return False
 
+REQUEST_COUNT = 0
 
 def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     """Download file"""
+    global REQUEST_COUNT
+
     url = dl_file[0]
     save_path = dl_file[1]
 
@@ -84,11 +87,18 @@ def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     headers = headers if headers else {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
     }
+
     proxies = proxies if proxies else { "http": "", "https":"", }
 
     for i in range(max_retry):
         try:
+            if REQUEST_COUNT >= 330: 
+                sleep(15 * 60 + 10) 
+                REQUEST_COUNT = 0
+
             r = requests.get(url, headers=headers, proxies=proxies)
+            REQUEST_COUNT += 1
+
             with open(save_path, "wb") as f:
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
@@ -130,6 +140,18 @@ def download_repo(config):
     files = []
     out = []
     for file in dict_parse(file_list):
+        # import pdb; pdb.set_trace()
+        if 'arch2vec' in file:
+            pass 
+        if 'CATE' in file:
+            pass 
+        if 'correlation_results' in file:
+            pass 
+        if any('.slurm' in str(x) for x in file):
+            pass
+        if any('.csv' in str(x) for x in file):
+            pass 
+        print(file)
         file_path = os.path.join(*file[-len(file):-2]) # * operator to unpack the arguments out of a list
         save_path = os.path.join(save_dir, file_path)
         file_url = os.path.join(dl_url, file_path).replace("\\","/") # replace \ with / for Windows compatibility
