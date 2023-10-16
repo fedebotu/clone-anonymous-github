@@ -60,12 +60,9 @@ def check_file_authentic(save_path):
     except Exception:
         return False
 
-REQUEST_COUNT = 0
 
 def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     """Download file"""
-    global REQUEST_COUNT
-
     url = dl_file[0]
     save_path = dl_file[1]
 
@@ -87,18 +84,11 @@ def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     headers = headers if headers else {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
     }
-
     proxies = proxies if proxies else { "http": "", "https":"", }
 
     for i in range(max_retry):
         try:
-            if REQUEST_COUNT >= 330: 
-                sleep(15 * 60 + 10) 
-                REQUEST_COUNT = 0
-
             r = requests.get(url, headers=headers, proxies=proxies)
-            REQUEST_COUNT += 1
-
             with open(save_path, "wb") as f:
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
