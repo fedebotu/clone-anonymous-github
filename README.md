@@ -4,6 +4,8 @@ Easily clone/download Anonymous Github repositories from [anonymous.4open.scienc
 
 _No need for GUI interface? We support command line as well!_
 
+> Please take notice of [this Github issue](https://github.com/tdurieux/anonymous_github/issues/24), as it seems that the reason cloning is not implemented is because of server managing costs. Please do not abuse the service and if possible, support [Anonymous Github](https://github.com/tdurieux/anonymous_github)!
+
 ## Download
 [![Latest release](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-WINDOWS.exe) [![Latest release](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/fedebotu/clone-anonymous-github/releases/download/0.2.1/Clone-Anonymous-Github-MAC.tar)
 
@@ -28,6 +30,11 @@ python run.py
 git clone https://github.com/fedebotu/clone-anonymous-github.git && cd clone-anonymous-github
 python3 src/download.py --url [YOUR_ANONYMOUS_GITHUB_URL]
 ```
+
+## Known "Bugs"
+
+- The maximum number of downloads is exceeded: (also in [this PR](https://github.com/fedebotu/clone-anonymous-github/pull/5)), there are limitations on the number of downloads every 15 minutes from the same IP address. If this happens, either wait or change your IP (i.e., with a VPN).
+
 
 ## Contribute
 Feel free to raise issues and submit pull requests! :D
