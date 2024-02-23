@@ -33,7 +33,7 @@ python3 src/download.py --url [YOUR_ANONYMOUS_GITHUB_URL]
 
 ## Known "Bugs"
 
-- The maximum number of downloads is exceeded: (also in [this PR](https://github.com/fedebotu/clone-anonymous-github/pull/5)), there are limitations on the number of downloads every 15 minutes from the same IP address. If this happens, either wait or change your IP (i.e., with a VPN).
+- The maximum number of downloads is exceeded: (also in [this PR](https://github.com/fedebotu/clone-anonymous-github/pull/5)), there are limitations on the number of downloads every 15 minutes from the same IP address. If this happens, either wait or change your IP (i.e., with a VPN). If you decide to wait: wait for 15 minutes and then start the download again to the same directory. Already downloaded files will be skipped, and 'bad' files will be downloaded.
 
 
 ## Contribute
