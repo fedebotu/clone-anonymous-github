@@ -4,6 +4,7 @@ Easily clone/download Anonymous Github repositories from [anonymous.4open.scienc
 
 _No need for GUI interface? We support command line as well!_
 
+> [!IMPORTANT] 
 > Please take notice of [this Github issue](https://github.com/tdurieux/anonymous_github/issues/24), as it seems that the reason cloning is not implemented is because of server managing costs. Please do not abuse the service and if possible, support [Anonymous Github](https://github.com/tdurieux/anonymous_github)!
 
 ## Download
