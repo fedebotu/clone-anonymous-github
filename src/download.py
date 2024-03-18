@@ -3,7 +3,13 @@ import os
 from time import sleep
 import concurrent.futures
 from functools import partial
+import threading
 
+
+
+class RequestLimitReached(Exception):
+    """Exception raised when the request limit is reached."""
+    pass
 
 def dict_parse(dic, pre=None):
     pre = pre[:] if pre else []
@@ -61,7 +67,7 @@ def check_file_authentic(save_path):
         return False
 
 
-def req_url(dl_file, max_retry=5, headers=None, proxies=None):
+def req_url(dl_file, max_retry=5, headers=None, proxies=None, wait_event=None):
     """Download file"""
     url = dl_file[0]
     save_path = dl_file[1]
@@ -86,17 +92,30 @@ def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     }
     proxies = proxies if proxies else { "http": "", "https":"", }
 
-    for i in range(max_retry):
+    attempt = 0
+    while attempt < max_retry:
+        if wait_event.is_set():
+            print(f"Waiting due to rate limit, attempt {attempt}")
+            wait_event.wait()  # Wait until the event is cleared
         try:
             r = requests.get(url, headers=headers, proxies=proxies)
+            if r.text.startswith("You can only make 350 requests every 15min"):
+                wait_event.set() 
+                print(f"Request limit reached, waiting for 15 minutes. Attempt {attempt}")
+                sleep(15 * 60)  
+                wait_event.clear()  # Clear the event to resume all threads
+                attempt += 1
+                continue
             with open(save_path, "wb") as f:
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
         except Exception as e:
             exception = e
-            # print('file request exception (retry {}): {} - {}'.format(i, e, save_path))
             sleep(0.4)
-    return 'File request exception (retry {}): {} - {}'.format(i, exception, save_path)
+        attempt += 1
+    return 'File request exception (retry {}): {} - {}'.format(attempt, exception, save_path)
+
+
 
 
 def download_repo(config):
@@ -136,8 +155,10 @@ def download_repo(config):
         files.append((file_url, save_path))
 
     partial_req = partial(req_url, max_retry=max_retry, headers=headers, proxies=proxies)
+    wait_event = threading.Event()
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_conns) as executor:
-        future_to_url = (executor.submit(partial_req, dl_file) for dl_file in files)
+        partial_req = partial(req_url, max_retry=max_retry, headers=headers, proxies=proxies, wait_event=wait_event)
+        future_to_url = {executor.submit(partial_req, dl_file): dl_file for dl_file in files}
         for future in concurrent.futures.as_completed(future_to_url):
             try:
                 data = future.result()
