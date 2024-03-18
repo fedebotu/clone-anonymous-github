@@ -5,6 +5,10 @@ import concurrent.futures
 from functools import partial
 
 
+class RequestLimitReached(Exception):
+    """Exception raised when the request limit is reached."""
+    pass
+
 def dict_parse(dic, pre=None):
     pre = pre[:] if pre else []
     if isinstance(dic, dict):
@@ -89,14 +93,18 @@ def req_url(dl_file, max_retry=5, headers=None, proxies=None):
     for i in range(max_retry):
         try:
             r = requests.get(url, headers=headers, proxies=proxies)
+            if r.text.startswith("You can only make 350 requests every 15min"):
+                raise RequestLimitReached("Request limit reached")
             with open(save_path, "wb") as f:
                 f.write(r.content)
             return 'Downloaded: ' + str(save_path)
+        except RequestLimitReached as e:
+            return str(e)
         except Exception as e:
             exception = e
-            # print('file request exception (retry {}): {} - {}'.format(i, e, save_path))
             sleep(0.4)
     return 'File request exception (retry {}): {} - {}'.format(i, exception, save_path)
+
 
 
 def download_repo(config):
@@ -136,11 +144,17 @@ def download_repo(config):
         files.append((file_url, save_path))
 
     partial_req = partial(req_url, max_retry=max_retry, headers=headers, proxies=proxies)
+    limit_reached = False
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_conns) as executor:
         future_to_url = (executor.submit(partial_req, dl_file) for dl_file in files)
         for future in concurrent.futures.as_completed(future_to_url):
+            if limit_reached:
+                break  # Stop the download process if the limit is reached
             try:
                 data = future.result()
+                if "Request limit reached" in data:
+                    print(data)
+                    limit_reached = True
             except Exception as exc:
                 data = str(type(exc))
             finally:
