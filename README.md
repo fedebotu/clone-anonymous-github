@@ -1,4 +1,8 @@
-# Clone Anonymous Github
+# Clone Anonymous Github (deprecated)
+
+> [!CAUTION]
+> Now [Anonymous Github](https://github.com/fedebotu/clone-anonymous-github/issues/12) supports downloading repos directly; please use that functionality instead!
+
 
 Easily clone/download Anonymous Github repositories from [anonymous.4open.science](anonymous.4open.science) with a GUI interface.
 
